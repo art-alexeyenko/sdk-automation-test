@@ -1,5 +1,5 @@
 ---
-description: JavaScript/TypeScript rules for your Sitecore App Router project
+description: JavaScript/TypeScript rules for your Sitecore project
 alwaysApply: false
 globs:
   - '**/*.js'
@@ -44,19 +44,19 @@ Directory Structure:
 
 ```
 src/
-  app/                 # App Router pages and layouts
   components/          # UI components (React)
   lib/                 # Configuration and utilities
-  i18n/                # Internationalization setup
+  pages/               # Next.js pages (or app/ for App Router)
+  assets/              # Static assets and styles
   types/               # TypeScript type definitions
+  hooks/               # Custom React hooks
 ```
 
 File Organization:
 
-- Server Components for data fetching and static content
-- Client Components for interactivity (use 'use client')
 - Group related functionality in feature directories
 - Keep components co-located with their styles and tests
+- Export public APIs through index.ts files
 
 ## Error Handling
 
@@ -95,9 +95,9 @@ Input Validation:
 Optimization Patterns:
 
 - Cache API responses using React Query or SWR
-- Use Server Components for better performance
+- Memoize components with React.memo when appropriate
 - Lazy-load non-critical modules: `const Component = lazy(() => import('./Component'))`
-- Use useCallback and useMemo for expensive operations in Client Components
+- Use useCallback and useMemo for expensive operations
 
 TypeScript:
 
@@ -106,7 +106,7 @@ TypeScript:
 - Use discriminated unions for complex state management
 
 Referenced:
-@src/app/
 @src/components/
 @src/lib/
+@src/types/
 

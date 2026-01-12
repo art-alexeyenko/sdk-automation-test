@@ -1,16 +1,17 @@
-import React, { JSX } from "react";
-import { Field, Page } from "@sitecore-content-sdk/nextjs";
-import Scripts from "src/Scripts";
-import SitecoreStyles from "components/content-sdk/SitecoreStyles";
-import { DesignLibraryApp } from "@sitecore-content-sdk/nextjs";
-import { AppPlaceholder } from "@sitecore-content-sdk/nextjs";
-import componentMap from ".sitecore/component-map";
+/**
+ * This Layout is needed for Starter Kit.
+ */
+import React, { JSX } from 'react';
+import Head from 'next/head';
+import { Placeholder, Field, DesignLibrary, Page } from '@sitecore-content-sdk/nextjs';
+import Scripts from 'src/Scripts';
+import SitecoreStyles from 'src/components/content-sdk/SitecoreStyles';
 
 interface LayoutProps {
   page: Page;
 }
 
-export interface RouteFields {
+interface RouteFields {
   [key: string]: unknown;
   Title?: Field;
 }
@@ -18,59 +19,38 @@ export interface RouteFields {
 const Layout = ({ page }: LayoutProps): JSX.Element => {
   const { layout, mode } = page;
   const { route } = layout.sitecore;
-  const mainClassPageEditing = mode.isEditing ? "editing-mode" : "prod-mode";
+  const fields = route?.fields as RouteFields;
+  const mainClassPageEditing = mode.isEditing ? 'editing-mode' : 'prod-mode';
+  const importMapDynamic = () => import('.sitecore/import-map');
 
   return (
     <>
       <Scripts />
       <SitecoreStyles layoutData={layout} />
+      <Head>
+        <title>{fields?.Title?.value?.toString() || 'Page'}</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
       {/* root placeholder for the app, which we add components to using route data */}
       <div className={mainClassPageEditing}>
         {mode.isDesignLibrary ? (
-          route && (
-            <DesignLibraryApp
-              page={page}
-              rendering={route}
-              componentMap={componentMap}
-              loadServerImportMap={() => import(".sitecore/import-map.server")}
-            />
-          )
+          <DesignLibrary loadImportMap={importMapDynamic} />
         ) : (
           <>
             <header>
               <div id="header">
-                {route && (
-                  <AppPlaceholder
-                    page={page}
-                    componentMap={componentMap}
-                    name="headless-header"
-                    rendering={route}
-                  />
-                )}
+                {route && <Placeholder name="headless-header" rendering={route} />}
               </div>
             </header>
             <main>
               <div id="content">
-                {route && (
-                  <AppPlaceholder
-                    page={page}
-                    componentMap={componentMap}
-                    name="headless-main"
-                    rendering={route}
-                  />
-                )}
+                {route && <Placeholder name="headless-main" rendering={route} />}
               </div>
             </main>
             <footer>
               <div id="footer">
-                {route && (
-                  <AppPlaceholder
-                    page={page}
-                    componentMap={componentMap}
-                    name="headless-footer"
-                    rendering={route}
-                  />
-                )}
+                {route && <Placeholder name="headless-footer" rendering={route} />}
               </div>
             </footer>
           </>
