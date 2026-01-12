@@ -1,10 +1,11 @@
-# GitHub Copilot Instructions for Sitecore Content SDK Next.js Project
+# Sitecore Content SDK Next.js Project - Windsurf AI Rules
 
 ## Project Purpose and Tech Stack
 
 This is a **Sitecore Content SDK** application built with **Next.js** and **TypeScript**. The project follows Sitecore best practices for XM Cloud development and provides a modern, performant web application framework.
 
 ### Key Technologies
+
 - **Next.js** - React framework with SSR/SSG capabilities
 - **Sitecore Content SDK** - Official SDK for Sitecore XM Cloud integration
 - **TypeScript** - Type-safe JavaScript development
@@ -14,12 +15,14 @@ This is a **Sitecore Content SDK** application built with **Next.js** and **Type
 ## Coding Standards
 
 ### TypeScript Standards
+
 - Use **strict mode** in tsconfig.json
 - Prefer type assertions over `any`: `value as ContentItem`
 - Use discriminated unions for complex state management
 - Enable strict null checks and strict function types
 
 ### Naming Conventions
+
 - **Variables/Functions**: camelCase (`getUserData()`, `isLoading`, `currentUser`)
 - **Components**: PascalCase (`SitecoreComponent`, `PageLayout`, `ContentBlock`)
 - **Constants**: UPPER_SNAKE_CASE (`API_ENDPOINT`, `DEFAULT_TIMEOUT`)
@@ -27,6 +30,7 @@ This is a **Sitecore Content SDK** application built with **Next.js** and **Type
 - **Types/Interfaces**: PascalCase (`ContentItem`, `LayoutProps`, `SitecoreConfig`)
 
 ### Modular Layout
+
 ```
 src/
   components/          # UI components (React)
@@ -40,6 +44,7 @@ src/
 ## Library Usage
 
 ### @sitecore-content-sdk
+
 - Use `SitecoreClient` for content fetching
 - Implement proper error handling with try/catch blocks
 - Cache API responses using React Query or SWR
@@ -55,6 +60,7 @@ const client = new SitecoreClient({
 ```
 
 ### React Patterns
+
 - Use **Server Components** for data fetching and static content
 - Use **Client Components** for interactivity (use 'use client')
 - Implement proper error boundaries
@@ -62,6 +68,7 @@ const client = new SitecoreClient({
 - Leverage useCallback and useMemo for performance optimization
 
 ### Sitecore Field Components
+
 - Always use Sitecore field components: `<Text>`, `<RichText>`, `<Image>`
 - Validate field existence before rendering
 - Handle empty/null fields gracefully
@@ -79,6 +86,7 @@ const client = new SitecoreClient({
 ## Example Patterns and Prompts
 
 ### Component Development
+
 ```typescript
 // Component props interface
 interface HeroProps {
@@ -101,6 +109,7 @@ export default function Hero({ fields }: HeroProps) {
 ```
 
 ### Error Handling
+
 ```typescript
 async function fetchPageData(path: string): Promise<Page | null> {
   if (!path) {
@@ -117,6 +126,7 @@ async function fetchPageData(path: string): Promise<Page | null> {
 ```
 
 ### Configuration
+
 ```typescript
 // sitecore.config.ts
 import { defineConfig } from '@sitecore-content-sdk/nextjs/config';
@@ -149,6 +159,7 @@ export default defineConfig({
 ## Best Practices
 
 ### Performance
+
 - Optimize images using Next.js Image component
 - Implement proper loading states
 - Cache expensive operations appropriately
@@ -156,6 +167,7 @@ export default defineConfig({
 - Lazy-load non-critical modules
 
 ### Security
+
 - Sanitize user inputs before processing
 - Validate data at application boundaries
 - Use HTTPS for all Sitecore connections
@@ -163,6 +175,7 @@ export default defineConfig({
 - Escape content when rendering to prevent XSS
 
 ### Code Quality
+
 - Follow DRY principle - extract common functionality
 - Use SOLID principles for maintainable code
 - Write self-documenting code with clear intent

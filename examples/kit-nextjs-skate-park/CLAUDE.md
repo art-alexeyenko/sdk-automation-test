@@ -1,4 +1,4 @@
-# GitHub Copilot Instructions for Sitecore Content SDK Next.js Project
+# Claude Code Agent Guide for Sitecore Content SDK Next.js Project
 
 ## Project Purpose and Tech Stack
 
