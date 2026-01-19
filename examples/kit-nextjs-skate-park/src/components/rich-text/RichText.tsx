@@ -10,18 +10,14 @@ export type RichTextProps = ComponentProps & {
   fields: Fields;
 };
 
-export const Default = ({ params, fields }: RichTextProps): JSX.Element => {
-  const { RenderingIdentifier, styles } = params;
-
+export const Default = ({ fields }: RichTextProps): JSX.Element => {
   return (
-    <div className={`component rich-text ${styles}`} id={RenderingIdentifier}>
-      <div className="component-content">
-        {fields ? (
-          <ContentSdkRichText field={fields.Text} />
-        ) : (
-          <span className="is-empty-hint">Rich text</span>
-        )}
-      </div>
-    </div>
+    <>
+      {fields ? (
+        <ContentSdkRichText field={fields.Text} />
+      ) : (
+        <span className="is-empty-hint">Rich text</span>
+      )}
+    </>
   );
 };
