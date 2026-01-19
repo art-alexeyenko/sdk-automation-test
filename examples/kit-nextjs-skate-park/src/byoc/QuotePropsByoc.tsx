@@ -2,13 +2,13 @@ import { TextField } from "@sitecore-content-sdk/nextjs";
 import { ComponentProps } from "lib/component-props";
 import { Text } from "@sitecore-content-sdk/nextjs";
 
-interface QuoteProps extends ComponentProps {
+interface QuotePropsByoc extends ComponentProps {
   fields: {
     Quote: TextField;
   };
 }
 
-export default function Default({ fields }: QuoteProps) {
+export default function Default({ fields }: QuotePropsByoc) {
   const { Quote } = fields;
 
   return (

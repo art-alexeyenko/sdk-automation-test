@@ -7,5 +7,5 @@
  */
 
 // eslint-disable-next-line import/no-anonymous-default-export
-import './QoutePropsBYOC';
+import './QuotePropsByoc';
 export default {};
