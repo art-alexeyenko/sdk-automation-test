@@ -1,19 +1,27 @@
-import { TextField } from "@sitecore-content-sdk/nextjs";
-import { ComponentProps } from "lib/component-props";
-import { Text } from "@sitecore-content-sdk/nextjs";
+import React, { JSX } from 'react';
+import { Field, RichText as ContentSdkRichText } from '@sitecore-content-sdk/nextjs';
+import { ComponentProps } from 'lib/component-props';
 
-interface RichTextProps extends ComponentProps {
-  fields: {
-    Quote: TextField;
-  };
+interface Fields {
+  Text: Field<string>;
 }
 
-export default function Default({ fields }: RichTextProps) {
-  const { Quote } = fields;
+export type RichTextProps = ComponentProps & {
+  fields: Fields;
+};
+
+export const Default = ({ params, fields }: RichTextProps): JSX.Element => {
+  const { RenderingIdentifier, styles } = params;
 
   return (
-    <>
-      <Text field={Quote} />
-    </>
+    <div className={`component rich-text ${styles}`} id={RenderingIdentifier}>
+      <div className="component-content">
+        {fields ? (
+          <ContentSdkRichText field={fields.Text} />
+        ) : (
+          <span className="is-empty-hint">Rich text</span>
+        )}
+      </div>
+    </div>
   );
-}
+};
