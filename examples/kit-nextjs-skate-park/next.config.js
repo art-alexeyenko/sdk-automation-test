@@ -4,6 +4,7 @@ const path = require('path');
  * @type {import('next').NextConfig}
  */
 const nextConfig = {
+  basePath: '/test',
   // Allow specifying a distinct distDir when concurrently running app in a container
   distDir: process.env.NEXTJS_DIST_DIR || '.next',
 
