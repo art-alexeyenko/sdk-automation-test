@@ -7,6 +7,8 @@ import {
 } from '@sitecore-content-sdk/nextjs/codegen';
 // end of built-in imports
 
+import { jsx, Fragment, jsxs } from 'react/jsx-runtime';
+import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { Link, Text, useSitecore, Placeholder, RichText, NextImage, CdpHelper, withDatasourceCheck } from '@sitecore-content-sdk/nextjs';
 import { useState, useEffect } from 'react';
 import React from 'react';
@@ -19,6 +21,27 @@ import { pageView } from '@sitecore-cloudsdk/events/browser';
 import config from 'sitecore.config';
 
 const importMap = [
+  {
+    module: 'react/jsx-runtime',
+    exports: [
+      { name: 'jsx', value: jsx },
+      { name: 'Fragment', value: Fragment },
+      { name: 'jsxs', value: jsxs },
+    ]
+  },
+  {
+    module: 'chart.js',
+    exports: [
+      { name: 'Chart', value: Chart },
+      { name: 'CategoryScale', value: CategoryScale },
+      { name: 'LinearScale', value: LinearScale },
+      { name: 'PointElement', value: PointElement },
+      { name: 'LineElement', value: LineElement },
+      { name: 'Title', value: Title },
+      { name: 'Tooltip', value: Tooltip },
+      { name: 'Legend', value: Legend },
+    ]
+  },
   {
     module: '@sitecore-content-sdk/nextjs',
     exports: [

@@ -4,9 +4,14 @@ const path = require('path');
  * @type {import('next').NextConfig}
  */
 const nextConfig = {
-  basePath: '/test',
   // Allow specifying a distinct distDir when concurrently running app in a container
   distDir: process.env.NEXTJS_DIST_DIR || '.next',
+
+  // Enable Turbopack file system caching for faster dev startup (beta)
+  // See: https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack
+  experimental: {
+    turbopackFileSystemCacheForDev: true,
+  },
 
   i18n: {
     // These are all the locales you want to support in your application.
