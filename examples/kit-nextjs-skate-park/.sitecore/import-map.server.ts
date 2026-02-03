@@ -7,16 +7,40 @@ import {
 } from '@sitecore-content-sdk/nextjs/codegen';
 // end of built-in imports
 
-import { Text, Link, AppPlaceholder, RichText, NextImage, withDatasourceCheck } from '@sitecore-content-sdk/nextjs';
+import { jsx, Fragment, jsxs } from 'react/jsx-runtime';
+import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Link, Text, useSitecore, AppPlaceholder, RichText, NextImage, withDatasourceCheck } from '@sitecore-content-sdk/nextjs';
 import React from 'react';
 import componentMap from '.sitecore/component-map';
 
 const importMap = [
   {
+    module: 'react/jsx-runtime',
+    exports: [
+      { name: 'jsx', value: jsx },
+      { name: 'Fragment', value: Fragment },
+      { name: 'jsxs', value: jsxs },
+    ]
+  },
+  {
+    module: 'chart.js',
+    exports: [
+      { name: 'Chart', value: Chart },
+      { name: 'CategoryScale', value: CategoryScale },
+      { name: 'LinearScale', value: LinearScale },
+      { name: 'PointElement', value: PointElement },
+      { name: 'LineElement', value: LineElement },
+      { name: 'Title', value: Title },
+      { name: 'Tooltip', value: Tooltip },
+      { name: 'Legend', value: Legend },
+    ]
+  },
+  {
     module: '@sitecore-content-sdk/nextjs',
     exports: [
-      { name: 'Text', value: Text },
       { name: 'Link', value: Link },
+      { name: 'Text', value: Text },
+      { name: 'useSitecore', value: useSitecore },
       { name: 'AppPlaceholder', value: AppPlaceholder },
       { name: 'RichText', value: RichText },
       { name: 'NextImage', value: NextImage },
