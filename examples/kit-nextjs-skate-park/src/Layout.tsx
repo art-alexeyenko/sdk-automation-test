@@ -1,4 +1,4 @@
-import { JSX } from 'react';
+import React, { JSX } from 'react';
 import { AppPlaceholder, DesignLibraryApp, Field, Page } from '@sitecore-content-sdk/nextjs';
 import Scripts from 'src/Scripts';
 import SitecoreStyles from 'components/content-sdk/SitecoreStyles';
