@@ -1,7 +1,6 @@
 import { isDesignLibraryPreviewData } from '@sitecore-content-sdk/nextjs/editing';
 import { notFound } from 'next/navigation';
-import { draftMode } from 'next/headers';
-import { Suspense } from 'react';
+import { draftMode } from 'next/headers'
 import { SiteInfo } from '@sitecore-content-sdk/nextjs';
 import sites from '.sitecore/sites.json';
 import { routing } from 'src/i18n/routing';
@@ -11,19 +10,18 @@ import Layout, { RouteFields } from 'src/Layout';
 import Providers from 'src/Providers';
 import { NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
-import 'assets/main.css';
 
 type PageProps = {
   params: Promise<{ site: string; locale: string; path?: string[]; [key: string]: string | string[] | undefined }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-// Part of page component that handles dynamic data, like the `draftMode()` call and data fetching.
-// This component is wrapped in Suspense to enable Next.js 16 Partial Prerendering (PPR),
-// which allows streaming dynamic content while keeping static parts prerendered.
-// This pattern also works seamlessly when Cache Components is enabled.
-async function DynamicPageContent({ site, locale, path, searchParams }: { site: string; locale: string; path?: string[]; searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+export default async function Page({ params, searchParams }: PageProps) {
+  const { site, locale, path } = await params;
   const draft = await draftMode();
+
+  // Set site and locale to be available in src/i18n/request.ts for fetching the dictionary
+  setRequestLocale(`${site}_${locale}`);
 
   // Fetch the page data from Sitecore
   let page;
@@ -52,21 +50,6 @@ async function DynamicPageContent({ site, locale, path, searchParams }: { site: 
   );
 }
 
-export default async function Page({ params, searchParams }: PageProps) {
-  const { site, locale, path } = await params;
-
-  // Set site and locale to be available in src/i18n/request.ts for fetching the dictionary
-  setRequestLocale(`${site}_${locale}`);
-
-  // Wrap dynamic content in Suspense to enable Next.js 16 Partial Prerendering (PPR).
-  // PPR allows streaming dynamic content while keeping static parts prerendered for better performance.
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <DynamicPageContent site={site} locale={locale} path={path} searchParams={searchParams} />
-    </Suspense>
-  );
-}
-
 // This function gets called at build and export time to determine
 // pages for SSG ("paths", as tokenized array).
 export const generateStaticParams = async () => {
@@ -76,15 +59,7 @@ export const generateStaticParams = async () => {
       routing.locales.slice()
     );
   }
-  // Next.js 16 requires at least one result
-  // Return a default param for the root page
-  return [
-    {
-      site: sites[0]?.name || 'default',
-      locale: routing.defaultLocale || scConfig.defaultLanguage,
-      path: [],
-    },
-  ];
+  return [];
 };
 // Metadata fields for the page.
 export const generateMetadata = async ({ params }: PageProps) => {
