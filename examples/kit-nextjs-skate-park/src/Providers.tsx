@@ -18,12 +18,7 @@ const Providers = ({
 }) => {
   return (
     <ComponentPropsContext value={componentProps || {}}>
-      <SitecoreProvider
-        componentMap={components}
-        api={scConfig.api}
-        page={page}
-        loadImportMap={() => import('.sitecore/import-map')}
-      >
+      <SitecoreProvider componentMap={components} api={scConfig.api} page={page}>
         {children}
       </SitecoreProvider>
     </ComponentPropsContext>
