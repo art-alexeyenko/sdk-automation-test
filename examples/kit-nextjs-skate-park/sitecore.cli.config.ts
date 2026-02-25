@@ -1,21 +1,16 @@
-import scConfig from './sitecore.config';
+import config from './sitecore.config';
 import { defineCliConfig } from '@sitecore-content-sdk/nextjs/config-cli';
-import {
-  generateSites,
-  generateMetadata,
-  extractFiles,
-  writeImportMap,
-} from '@sitecore-content-sdk/nextjs/tools';
+import { generateSites, generateMetadata, extractFiles } from '@sitecore-content-sdk/nextjs/tools';
 
 export default defineCliConfig({
-  config: scConfig,
   build: {
     commands: [
       generateMetadata(),
-      generateSites(),
-      extractFiles(),
-      writeImportMap({
-        paths: ['src/components'],
+      generateSites({
+        scConfig: config,
+      }),
+      extractFiles({
+        scConfig: config,
       }),
     ],
   },
