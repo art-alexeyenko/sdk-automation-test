@@ -14,6 +14,21 @@ import { NextIntlClientProvider } from 'next-intl';
 async function NotFoundContent() {
   const { site, locale } = getCachedPageParams();
 
+  const effectiveSite = site || scConfig.defaultSite;
+  const effectiveLocale = locale || scConfig.defaultLanguage;
+ 
+  // Some prerender paths can hit not-found without cached params being set.
+  // Skip SDK error page fetch if site cannot be resolved.
+  if (!effectiveSite) {
+    return (
+      <div style={{ padding: 10 }}>
+        <h1>Page not found</h1>
+        <p>This page does not exist.</p>
+        <Link href="/">Go to the Home page</Link>
+      </div>
+    );
+  }
+
   const page = await client.getErrorPage(ErrorPage.NotFound, {
     site: site || scConfig.defaultSite,
     locale: locale || scConfig.defaultLanguage,
