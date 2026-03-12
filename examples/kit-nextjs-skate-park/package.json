@@ -22,9 +22,9 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@sitecore-content-sdk/analytics-core": "2.0.0-canary.17",
-    "@sitecore-content-sdk/events": "2.0.0-canary.17",
-    "@sitecore-content-sdk/nextjs": "2.0.0-canary.17",
+    "@sitecore-content-sdk/analytics-core": "2.0.0-canary.20",
+    "@sitecore-content-sdk/events": "2.0.0-canary.20",
+    "@sitecore-content-sdk/nextjs": "2.0.0-canary.20",
     "@sitecore-feaas/clientside": "^0.6.0",
     "@sitecore/components": "~2.1.0",
     "@tailwindcss/postcss": "^4.2.1",
@@ -39,7 +39,7 @@
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
-    "@sitecore-content-sdk/cli": "2.0.0-canary.17",
+    "@sitecore-content-sdk/cli": "2.0.0-canary.20",
     "@stylistic/eslint-plugin": "^5.2.2",
     "@types/node": "^24.10.4",
     "@types/react": "^19.2.7",
