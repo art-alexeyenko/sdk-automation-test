@@ -7,6 +7,81 @@ import {
 } from '@sitecore-content-sdk/nextjs/codegen';
 // end of built-in imports
 
-const importMap: ImportEntry[] = [];
+import { Link, Text, useSitecore, Placeholder, RichText, NextImage, CdpHelper, withDatasourceCheck } from '@sitecore-content-sdk/nextjs';
+import { useState, useEffect } from 'react';
+import React from 'react';
+import Head from 'next/head';
+import client from 'lib/sitecore-client';
+import Image from 'next/image';
+import * as FEAAS from '@sitecore-feaas/clientside/react';
+import nextConfig from 'next.config';
+import { pageView } from '@sitecore-content-sdk/events';
+import config from 'sitecore.config';
+
+const importMap = [
+  {
+    module: '@sitecore-content-sdk/nextjs',
+    exports: [
+      { name: 'Link', value: Link },
+      { name: 'Text', value: Text },
+      { name: 'useSitecore', value: useSitecore },
+      { name: 'Placeholder', value: Placeholder },
+      { name: 'RichText', value: RichText },
+      { name: 'NextImage', value: NextImage },
+      { name: 'CdpHelper', value: CdpHelper },
+      { name: 'withDatasourceCheck', value: withDatasourceCheck },
+    ]
+  },
+  {
+    module: 'react',
+    exports: [
+      { name: 'useState', value: useState },
+      { name: 'useEffect', value: useEffect },
+      { name: 'default', value: React },
+    ]
+  },
+  {
+    module: 'next/head',
+    exports: [
+      { name: 'default', value: Head },
+    ]
+  },
+  {
+    module: 'lib/sitecore-client',
+    exports: [
+      { name: 'default', value: client },
+    ]
+  },
+  {
+    module: 'next/image',
+    exports: [
+      { name: 'default', value: Image },
+    ]
+  },
+  {
+    module: '@sitecore-feaas/clientside/react',
+    exports: [
+      { name: '*', value: FEAAS },
+    ]
+  },
+  {
+    module: 'next.config',
+    exports: [
+      { name: 'default', value: nextConfig },
+    ]
+  },
+  {
+    module: '@sitecore-content-sdk/events',
+    exports: [
+      { name: 'pageView', value: pageView },
+    ]
+  },
+  {
+    module: 'sitecore.config',
+    exports: [
+      { name: 'default', value: config },
+    ]
+  }
+] as ImportEntry[];
 
 export default combineImportEntries(defaultImportEntries, importMap);
