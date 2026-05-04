@@ -1,46 +1,39 @@
-import { NextFetchEvent, type NextRequest } from 'next/server';
+import { type NextRequest, type NextFetchEvent } from 'next/server';
 import {
-  defineProxy,
-  MultisiteProxy,
-  PersonalizeProxy,
-  RedirectsProxy,
-  BotTrackingProxy,
-  PreviewProxy,
-} from '@sitecore-content-sdk/nextjs/proxy';
+  defineMiddleware,
+  MultisiteMiddleware,
+  PersonalizeMiddleware,
+  RedirectsMiddleware,
+  PreviewMiddleware,
+} from '@sitecore-content-sdk/nextjs/middleware';
 import sites from '.sitecore/sites.json';
 import scConfig from 'sitecore.config';
 import client from 'lib/sitecore-client';
 
-export default function proxy(req: NextRequest, event: NextFetchEvent) {
-  // PreviewProxy authorizes preview requests
-  const preview = new PreviewProxy({
+export function middleware(req: NextRequest, ev: NextFetchEvent) {
+  // Instantiate middlewares - they will use Edge config if available, otherwise fall back to local config
+  // Each middleware will skip processing if required API configuration is not available
+
+  // PreviewMiddleware authorizes preview requests
+  const preview = new PreviewMiddleware({
     client: client,
     ...scConfig.api.edge,
   });
 
-  // BotTrackingProxy will detect and track bots before any other proxies run
-  const botTracking = new BotTrackingProxy({
-    ...scConfig.api.edge,
-    sites,
-    fetchEvent: event,
-  });
-
-  // Instantiate proxies - they will use Edge config if available, otherwise fall back to local config
-  // Each proxy will skip processing if required API configuration is not available
-  const multisite = new MultisiteProxy({
+  const multisite = new MultisiteMiddleware({
     /**
      * List of sites for site resolver to work with
      */
     sites,
     ...scConfig.api.edge,
     ...scConfig.multisite,
-    // This function determines if the proxy should be turned off on per-request basis.
+    // This function determines if the middleware should be turned off on per-request basis.
     // Certain paths are ignored by default (e.g. files and Next.js API routes), but you may wish to disable more.
-    // This is an important performance consideration since Next.js Edge proxy runs on every request.
+    // This is an important performance consideration since Next.js Edge middleware runs on every request.
     skip: () => false,
   });
 
-  const redirects = new RedirectsProxy({
+  const redirects = new RedirectsMiddleware({
     /**
      * List of sites for site resolver to work with
      */
@@ -48,24 +41,24 @@ export default function proxy(req: NextRequest, event: NextFetchEvent) {
     ...scConfig.api.edge,
     ...scConfig.api.local,
     ...scConfig.redirects,
-    // This function determines if the proxy should be turned off on per-request basis.
+    // This function determines if the middleware should be turned off on per-request basis.
     // Certain paths are ignored by default (e.g. Next.js API routes), but you may wish to disable more.
     // By default it is disabled while in development mode.
-    // This is an important performance consideration since Next.js Edge proxy runs on every request.
+    // This is an important performance consideration since Next.js Edge middleware runs on every request.
     skip: () => false,
   });
 
-  const personalize = new PersonalizeProxy({
+  const personalize = new PersonalizeMiddleware({
     /**
      * List of sites for site resolver to work with
      */
     sites,
     ...scConfig.api.edge,
     ...scConfig.personalize,
-    // This function determines if the proxy should be turned off on per-request basis.
+    // This function determines if the middleware should be turned off on per-request basis.
     // Certain paths are ignored by default (e.g. Next.js API routes), but you may wish to disable more.
     // By default it is disabled while in development mode.
-    // This is an important performance consideration since Next.js Edge proxy runs on every request
+    // This is an important performance consideration since Next.js Edge middleware runs on every request
     skip: () => false,
     // This is an example of how to provide geo data for personalization.
     // The provided callback will be called on each request to extract geo data.
@@ -78,7 +71,7 @@ export default function proxy(req: NextRequest, event: NextFetchEvent) {
     // },
   });
 
-  return defineProxy(preview, botTracking, multisite, redirects, personalize).exec(req);
+  return defineMiddleware(preview, multisite, redirects, personalize).exec(req, ev);
 }
 
 export const config = {
