@@ -1,34 +1,26 @@
-import { NextFetchEvent, type NextRequest } from 'next/server';
+import { type NextRequest, type NextFetchEvent } from 'next/server';
 import {
-  defineProxy,
-  AppRouterMultisiteProxy,
-  PersonalizeProxy,
-  RedirectsProxy,
-  LocaleProxy,
-  BotTrackingProxy,
-  PreviewProxy,
-} from '@sitecore-content-sdk/nextjs/proxy';
+  defineMiddleware,
+  AppRouterMultisiteMiddleware,
+  PersonalizeMiddleware,
+  RedirectsMiddleware,
+  LocaleMiddleware,
+  PreviewMiddleware,
+} from '@sitecore-content-sdk/nextjs/middleware';
 import sites from '.sitecore/sites.json';
 import scConfig from 'sitecore.config';
 import { routing } from './i18n/routing';
 import client from './lib/sitecore-client';
 
-export default function proxy(req: NextRequest, event: NextFetchEvent) {
-  // PreviewProxy authorizes preview requests
-  const preview = new PreviewProxy({
+export function middleware(req: NextRequest, ev: NextFetchEvent) {
+  // PreviewMiddleware authorizes preview requests
+  const preview = new PreviewMiddleware({
     client: client,
     ...scConfig.api.edge,
   });
 
-  // BotTrackingProxy will detect and track bots before any other proxies run
-  const botTracking = new BotTrackingProxy({
-    ...scConfig.api.edge,
-    sites,
-    fetchEvent: event,
-  });
-
-  // LocaleProxy and AppRouterMultisiteProxy must always run for App Router routing
-  const locale = new LocaleProxy({
+  // LocaleMiddleware and AppRouterMultisiteMiddleware must always run for App Router routing
+  const locale = new LocaleMiddleware({
     /**
      * List of sites for site resolver to work with
      */
@@ -37,28 +29,28 @@ export default function proxy(req: NextRequest, event: NextFetchEvent) {
      * List of all supported locales configured in routing.ts
      */
     locales: routing.locales.slice(),
-    // This function determines if the proxy should be turned off on per-request basis.
+    // This function determines if the middleware should be turned off on per-request basis.
     // Certain paths are ignored by default (e.g. files and Next.js API routes), but you may wish to disable more.
-    // This is an important performance consideration since Next.js Edge proxy runs on every request.
-    // in multilanguage scenarios, we need locale proxy to always run first to ensure locale is set and used correctly by the rest of the proxies
+    // This is an important performance consideration since Next.js Edge middleware runs on every request.
+    // in multilanguage scenarios, we need locale middleware to always run first to ensure locale is set and used correctly by the rest of the middlewares
     skip: () => false,
   });
 
-  const multisite = new AppRouterMultisiteProxy({
+  const multisite = new AppRouterMultisiteMiddleware({
     /**
      * List of sites for site resolver to work with
      */
     sites,
     ...scConfig.multisite,
-    // This function determines if the proxy should be turned off on per-request basis.
+    // This function determines if the middleware should be turned off on per-request basis.
     // Certain paths are ignored by default (e.g. files and Next.js API routes), but you may wish to disable more.
-    // This is an important performance consideration since Next.js Edge proxy runs on every request.
+    // This is an important performance consideration since Next.js Edge middleware runs on every request.
     skip: () => false,
   });
 
-  // Instantiate proxies - they will use Edge config if available, otherwise fall back to local config
-  // Each proxy will skip processing if required API configuration is not available
-  const redirects = new RedirectsProxy({
+  // Instantiate middlewares - they will use Edge config if available, otherwise fall back to local config
+  // Each middleware will skip processing if required API configuration is not available
+  const redirects = new RedirectsMiddleware({
     /**
      * List of sites for site resolver to work with
      */
@@ -66,26 +58,26 @@ export default function proxy(req: NextRequest, event: NextFetchEvent) {
     ...scConfig.api.edge,
     ...scConfig.api.local,
     ...scConfig.redirects,
-    // This function determines if the proxy should be turned off on per-request basis.
+    // This function determines if the middleware should be turned off on per-request basis.
     // Certain paths are ignored by default (e.g. Next.js API routes), but you may wish to disable more.
     // By default it is disabled while in development mode.
-    // This is an important performance consideration since Next.js Edge proxy runs on every request.
+    // This is an important performance consideration since Next.js Edge middleware runs on every request.
     skip: () => false,
   });
 
-  const personalize = new PersonalizeProxy({
+  const personalize = new PersonalizeMiddleware({
     /**
      * List of sites for site resolver to work with
      */
     sites,
     ...scConfig.api.edge,
     ...scConfig.personalize,
-    // This function determines if the proxy should be turned off on per-request basis.
+    // This function determines if the middleware should be turned off on per-request basis.
     // Certain paths are ignored by default (e.g. Next.js API routes), but you may wish to disable more.
     // By default it is disabled while in development mode.
-    // This is an important performance consideration since Next.js Edge proxy runs on every request.
+    // This is an important performance consideration since Next.js Edge middleware runs on every request.
     // NOTE: Personalize requires Edge configuration and cannot work with local containers.
-    // The proxy will disable itself if Edge config is not present.
+    // The middleware will disable itself if Edge config is not present.
     skip: () => false,
     // This is an example of how to provide geo data for personalization.
     // The provided callback will be called on each request to extract geo data.
@@ -98,7 +90,7 @@ export default function proxy(req: NextRequest, event: NextFetchEvent) {
     // },
   });
 
-  return defineProxy(preview, botTracking, locale, multisite, redirects, personalize).exec(req);
+  return defineMiddleware(preview, locale, multisite, redirects, personalize).exec(req, ev);
 }
 
 export const config = {
