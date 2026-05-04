@@ -17,11 +17,10 @@ type PageProps = {
 
 export default async function Page({ params }: PageProps) {
   const { site, locale, path } = await params;
+  const draft = await draftMode();
 
   // Set site and locale to be available in src/i18n/request.ts for fetching the dictionary
   setRequestLocale(`${site}_${locale}`);
-
-  const draft = await draftMode();
 
   // Fetch the page data from Sitecore
   let page;
@@ -61,15 +60,7 @@ export const generateStaticParams = async () => {
       routing.locales.slice()
     );
   }
-  // Next.js 16 requires at least one result
-  // Return a default param for the root page
-  return [
-    {
-      site: sites[0]?.name || 'default',
-      locale: routing.defaultLocale || scConfig.defaultLanguage,
-      path: [],
-    },
-  ];
+  return [];
 };
 // Metadata fields for the page.
 export const generateMetadata = async ({ params }: PageProps) => {
