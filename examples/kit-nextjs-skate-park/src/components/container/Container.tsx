@@ -45,7 +45,6 @@ const Container = ({
             rendering={rendering}
             page={page}
             componentMap={componentMap}
-            render={children => <div className="my-wrapper">{children}</div>}
           />
         </div>
       </div>
