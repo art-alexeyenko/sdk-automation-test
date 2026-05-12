@@ -35,11 +35,7 @@ const Container = ({ params, rendering }: ContainerProps): JSX.Element => {
     <div className={`component container-default ${styles}`} id={id}>
       <div className="component-content" style={backgroundStyle}>
         <div className="row">
-          <Placeholder
-            name={phKey}
-            rendering={rendering}
-            render={(children) => <div className="my-wrapper">{children}</div>}
-          />
+          <Placeholder name={phKey} rendering={rendering} />
         </div>
       </div>
     </div>
