@@ -1,19 +1,19 @@
 import { JSX } from 'react';
-import { ComponentProps } from 'lib/component-props';
+import { AppPlaceholder } from '@sitecore-content-sdk/nextjs';
 import componentMap from '.sitecore/component-map';
-import { AppPlaceholder } from "@sitecore-content-sdk/nextjs";
+import { ComponentWithContextProps } from 'lib/component-props';
 
-const PartialDesignDynamicPlaceholder = (
-  props: ComponentProps
-): JSX.Element => {
-  return (
-    <AppPlaceholder
-      name={props.rendering?.params?.sig || ""}
-      rendering={props.rendering}
-      page={props.page}
-      componentMap={componentMap}
-    />
-  );
-};
+/**
+ * Renders a dynamic placeholder for partial designs.
+ * The placeholder key is provided via the rendering parameter `sig`.
+ */
+const PartialDesignDynamicPlaceholder = (props: ComponentWithContextProps): JSX.Element => (
+  <AppPlaceholder
+    name={props.rendering?.params?.sig || ''}
+    rendering={props.rendering}
+    page={props.page}
+    componentMap={componentMap}
+  />
+);
 
 export default PartialDesignDynamicPlaceholder;
