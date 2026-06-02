@@ -1,11 +1,11 @@
 {
-  "name": "content-sdk-nextjs-app-router",
-  "description": "Application utilizing Content SDK and Next.js",
+  "name": "content-sdk-nextjs-app-router-cache-components",
+  "description": "Content SDK Next.js App Router sample with Cache Components and On-demand revalidation",
   "version": "0.1.0",
   "private": true,
   "author": {
     "name": "Sitecore Corporation",
-    "url": "https://doc.sitecore.com/xmc/en/developers/content-sdk/index.html"
+    "url": "https://doc.sitecore.com/sai/en/developers/content-sdk/sitecore-content-sdk-for-sitecoreai.html"
   },
   "repository": {
     "type": "git",
@@ -29,17 +29,15 @@
   },
   "dependencies": {
     "@sitecore-content-sdk/analytics-core": "2.1.1-canary.20260528194647",
+    "@sitecore-content-sdk/personalize": "2.1.1-canary.20260528194647",
     "@sitecore-content-sdk/events": "2.1.1-canary.20260528194647",
     "@sitecore-content-sdk/nextjs": "2.2.0-canary.20260528194647",
-    "@sitecore-content-sdk/personalize": "2.1.1-canary.20260528194647",
     "@sitecore-feaas/clientside": "^0.6.0",
     "@sitecore/components": "~2.1.0",
     "next": "^16.2.0",
-    "next-intl": "^4.3.5",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "rsc-env": "^0.0.2",
-    "tailwind-bootstrap-grid": "^6.0.0"
+    "next-intl": "^4.3.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

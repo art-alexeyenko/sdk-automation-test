@@ -3,9 +3,9 @@ name: content-sdk-component-scaffold
 description: Creates new Sitecore components with correct file structure, props interface, and placement under src/components/. Use when adding a new component from scratch or scaffolding a component. App Router: decide Server vs Client and register in the appropriate map.
 ---
 
-# Content SDK Component Scaffold (App Router)
+# Content SDK Component Scaffold (App Router + Cache Components)
 
-Scaffold new Sitecore components so they integrate with the layout and editing pipeline. This app uses App Router with separate server and client component maps.
+Scaffold new Sitecore components so they integrate with the layout and editing pipeline. This app uses App Router with separate server and client component maps. Component data still flows from the cached page read (`getSitecorePage`); component code itself usually does not change because of Cache Components.
 
 ## When to Use
 
@@ -25,6 +25,7 @@ Scaffold new Sitecore components so they integrate with the layout and editing p
 - Define a props interface with the component's fields (e.g. `fields: { title: Field; ... }`) and any params. Use types from `@sitecore-content-sdk/react` or the app's types.
 - Export a single default component; one component per file unless the app pattern differs.
 - **Server vs Client:** Use Server Components by default. Add `'use client'` only for interactivity (hooks, event handlers). Register Server components in `.sitecore/component-map.ts`; Client components in `.sitecore/component-map.client.ts`.
+- Do not fetch Sitecore data inside the component (no `getSitecorePage` / `client.getPage` calls). Component data comes from the cached page read at the page level.
 - After creating the component file, register it in the correct component map (see content-sdk-component-registration). Do not leave the component unregistered.
 
 ## Stop Conditions

@@ -3,9 +3,9 @@ name: content-sdk-field-usage-image-link-text
 description: Renders Sitecore fields using SDK field components (Text, RichText, Image, Link) with proper validation and fallbacks. Use when rendering content fields or when the user mentions Text, RichText, Image, Link, or field components.
 ---
 
-# Content SDK Field Usage (App Router)
+# Content SDK Field Usage (App Router + Cache Components)
 
-Use SDK field components to render Sitecore fields with proper validation and fallbacks.
+Use SDK field components to render Sitecore fields with proper validation and fallbacks. Field rendering does not change between cached and preview reads — the same components handle both.
 
 ## When to Use
 
