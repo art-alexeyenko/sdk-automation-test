@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ErrorPage, getCachedPageParams } from '@sitecore-content-sdk/nextjs';
-import client from 'lib/sitecore-client';
+import { getSitecoreErrorPage } from 'lib/cache/get-sitecore-error-page';
 import scConfig from 'sitecore.config';
 import Layout from 'src/Layout';
 import Providers from 'src/Providers';
@@ -9,9 +9,10 @@ import { NextIntlClientProvider } from 'next-intl';
 export default async function NotFound() {
   const { site, locale } = getCachedPageParams();
 
-  const page = await client.getErrorPage(ErrorPage.NotFound, {
+  const page = await getSitecoreErrorPage({
     site: site || scConfig.defaultSite,
     locale: locale || scConfig.defaultLanguage,
+    code: ErrorPage.NotFound,
   });
 
   if (page) {
