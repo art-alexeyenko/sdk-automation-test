@@ -46,9 +46,7 @@ Directory Structure:
 src/
   app/                 # App Router pages and layouts
   components/          # UI components (React)
-  lib/
-    sitecore-client.ts # Single SitecoreClient instance
-    cache/             # Tag-aware data helpers (`use cache` + cacheTag)
+  lib/                 # Configuration and utilities
   i18n/                # Internationalization setup
   types/               # TypeScript type definitions
 ```
@@ -57,7 +55,6 @@ File Organization:
 
 - Server Components for data fetching and static content
 - Client Components for interactivity (use 'use client')
-- Cache helpers in `src/lib/cache/` for non-preview Sitecore reads
 - Group related functionality in feature directories
 - Keep components co-located with their styles and tests
 
@@ -97,7 +94,7 @@ Input Validation:
 
 Optimization Patterns:
 
-- Use the cache helpers in `src/lib/cache/` (Cache Components + `cacheTag`) for non-preview Sitecore reads
+- Cache API responses using React Query or SWR
 - Use Server Components for better performance
 - Lazy-load non-critical modules: `const Component = lazy(() => import('./Component'))`
 - Use useCallback and useMemo for expensive operations in Client Components

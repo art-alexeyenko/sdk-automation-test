@@ -1,19 +1,18 @@
 ---
-description: Getting started with your Sitecore Content SDK Next.js App Router + Cache Components project
+description: Getting started with your Sitecore Content SDK Next.js App Router project
 alwaysApply: true
 globs: []
 ---
 
-# Sitecore Content SDK Next.js App Router + Cache Components Project
+# Sitecore Content SDK Next.js App Router Project
 
 ## Project Overview
 
-This is a Sitecore Content SDK application built with Next.js App Router, **Next.js Cache Components** (`cacheComponents: true`), and **tag-based on-demand revalidation**. This project uses the latest Next.js features for improved performance, developer experience, and deterministic cache invalidation.
+This is a Sitecore Content SDK application built with Next.js App Router. This project uses the latest Next.js features for improved performance and developer experience.
 
 Key Technologies:
 
 - Next.js App Router (React Server Components)
-- Next.js Cache Components (`use cache`, `cacheTag`, `revalidateTag`)
 - Sitecore Content SDK
 - TypeScript
 - Sitecore XM Cloud
@@ -24,7 +23,7 @@ Key Technologies:
 Development Workflow:
 
 1. Install dependencies: `npm install`
-2. Configure environment variables (copy `.env.example` to `.env.local`), including `SITECORE_REVALIDATE_SECRET`
+2. Configure environment variables (copy `.env.example` to `.env.local`)
 3. Start development server: `npm run dev`
 4. Build for production: `npm run build`
 
@@ -34,7 +33,6 @@ App Router Specifics:
 - Client Components when interactivity needed
 - File-based routing in `src/app/` directory
 - Layout files for shared UI elements
-- Cache Components enabled in `next.config.ts`
 
 ## Project Structure
 
@@ -42,9 +40,7 @@ App Router Specifics:
 src/
   app/                 # App Router pages and layouts
   components/          # React-specific SDK
-  lib/
-    sitecore-client.ts # Single SitecoreClient instance
-    cache/             # Tag-aware data helpers (`use cache` + cacheTag)
+  lib/                 # Configuration and utilities
   i18n/                # Internationalization setup
 ```
 
@@ -68,30 +64,23 @@ Routing and Layouts:
 
 - Use layout.tsx for shared page structure
 - Implement loading.tsx for loading states
-- Create error.tsx / global-error.tsx for error boundaries
+- Create error.tsx for error boundaries
 - Use page.tsx for route content
 
 ## Sitecore Integration
 
 Content Rendering:
 
-- Fetch Sitecore data in Server Components via the cache helpers in `src/lib/cache/`
+- Fetch Sitecore data in Server Components
 - Use layout service for page structure
-- Handle content preview scenarios — preview must remain **dynamic** (do not wrap preview in `'use cache'`)
+- Handle content preview scenarios
 - Implement proper error handling
-
-Cache Components and revalidation:
-
-- Helpers in `src/lib/cache/` declare `'use cache';` and attach Sitecore tags (`sc:route`, `sc:item`, `sc:dict`) via `cacheTag`
-- `POST /api/revalidate` is a single Sitecore-webhook endpoint that accepts `updates[]` (publish events) and `tags[]` (pass-through `sc:` strings or bare item IDs)
-- The route is authorized via `SITECORE_REVALIDATE_SECRET` (sent in the `x-revalidate-secret` header)
-- Keep the SDK in-process dictionary cache disabled in `sitecore.config.ts` (`dictionary: { caching: { enabled: false } }`) so dictionary updates flow through Cache Components only
 
 Performance:
 
-- Leverage Server Components and Cache Components for better performance
+- Leverage Server Components for better performance
 - Use streaming for improved loading experience
-- Use the cache helpers consistently; do not introduce parallel cache layers
+- Implement proper caching strategies
 - Optimize images with Next.js Image component
 
 ## Development Commands
@@ -109,22 +98,19 @@ npm run type-check   # Run TypeScript compiler
 - Copy `.env.example` to `.env.local`
 - Add your Sitecore API endpoint and key
 - Configure site name and locale settings
-- Set `SITECORE_REVALIDATE_SECRET` to authorize `POST /api/revalidate`
 - Set up internationalization if needed
 
 ## Next Steps
 
 1. Configure your Sitecore connection
 2. Set up internationalization (if needed)
-3. Create your first Server Component (use cache helpers for cached reads)
+3. Create your first Server Component
 4. Add content types and templates
 5. Implement your layout structure
-6. Wire your Sitecore webhook to `POST /api/revalidate` with the shared secret
-7. Deploy to your hosting platform
+6. Deploy to your hosting platform
 
 Referenced:
 @src/app/
 @src/components/
-@src/lib/cache/
 @sitecore.config.ts
 @src/i18n/
