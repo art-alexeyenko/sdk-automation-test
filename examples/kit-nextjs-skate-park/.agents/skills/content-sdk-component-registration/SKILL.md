@@ -3,9 +3,9 @@ name: content-sdk-component-registration
 description: Registers Sitecore components in the component map so layout and editing can resolve them. App Router uses .sitecore/component-map.ts (Server) and .sitecore/component-map.client.ts (Client). Use when registering a new component or when layout/editor cannot find a component.
 ---
 
-# Content SDK Component Registration (App Router)
+# Content SDK Component Registration (App Router + Cache Components)
 
-Register components in the Sitecore component maps so the layout and editing pipeline can resolve and render them. This app has **two** maps: server and client.
+Register components in the Sitecore component maps so the layout and editing pipeline can resolve and render them. This app has **two** maps: server and client. The maps are independent of Cache Components — they describe how the layout pipeline resolves component names.
 
 ## When to Use
 
