@@ -9,6 +9,8 @@ import { defineConfig } from '@sitecore-content-sdk/nextjs/config';
  * dictionary caching in `getSitecoreDictionary` instead.
  */
 export default defineConfig({
+  defaultSite: process.env.NEXT_PUBLIC_DEFAULT_SITE_NAME || 'redirect',
+  defaultLanguage: process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE || 'en',
   dictionary: {
     caching: {
       enabled: false,

@@ -15,13 +15,30 @@ export default getRequestConfig(async ({ requestLocale }: GetRequestConfigParams
   const locale = hasLocale(routing.locales, parsedLocale) ? parsedLocale : routing.defaultLocale;
 
   const messages: Record<string, object> = {};
-  messages[parsedSite] = await getSitecoreDictionary({
-    locale,
-    site: parsedSite,
-  });
+  
+  // Gracefully handle missing dictionary during prerender (e.g., error pages)
+  try {
+    messages[parsedSite] = await getSitecoreDictionary({
+      locale,
+      site: parsedSite,
+    });
+  } catch (error) {
+    console.warn(`Failed to fetch dictionary for ${parsedSite}/${locale}:`, error);
+    messages[parsedSite] = {}; // Provide empty dict so fallback works
+  }
 
   return {
     locale,
     messages,
+    onError(error) {
+      // Gracefully handle missing dictionary keys instead of throwing
+      if (error.code === 'MISSING_MESSAGE') {
+        return;
+      }
+      console.error(error);
+    },
+    getMessageFallback({ key }) {
+      return key;
+    },
   };
 });
