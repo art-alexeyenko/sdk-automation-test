@@ -1,12 +1,11 @@
 import { isDesignLibraryPreviewData } from '@sitecore-content-sdk/nextjs/editing';
 import { notFound } from 'next/navigation';
-import { draftMode } from 'next/headers';
+import { draftMode, headers as nextHeaders } from 'next/headers';
 import { SiteInfo } from '@sitecore-content-sdk/nextjs';
 import sites from '.sitecore/sites.json';
 import { routing } from 'src/i18n/routing';
 import scConfig from 'sitecore.config';
 import client from 'src/lib/sitecore-client';
-import { getSitecorePage } from 'src/lib/cache/get-sitecore-page';
 import Layout, { RouteFields } from 'src/Layout';
 import Providers from 'src/Providers';
 import { NextIntlClientProvider } from 'next-intl';
@@ -14,18 +13,10 @@ import { setRequestLocale } from 'next-intl/server';
 
 type PageProps = {
   params: Promise<{ site: string; locale: string; path?: string[]; [key: string]: string | string[] | undefined }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-export default async function Page({ params, searchParams }: PageProps) {
+export default async function Page({ params }: PageProps) {
   const { site, locale, path } = await params;
-
-  // Cached fetch first so missing routes can notFound() without dynamic APIs in the ancestor tree.
-  const cachedPage = await getSitecorePage({ site, locale, path: path ?? [] });
-
-  if (!cachedPage) {
-    notFound();
-  }
 
   // Set site and locale to be available in src/i18n/request.ts for fetching the dictionary
   setRequestLocale(`${site}_${locale}`);
@@ -35,14 +26,16 @@ export default async function Page({ params, searchParams }: PageProps) {
   // Fetch the page data from Sitecore
   let page;
   if (draft.isEnabled) {
-    const editingParams = await searchParams;
-    if (isDesignLibraryPreviewData(editingParams)) {
-      page = await client.getDesignLibraryData(editingParams);
+    const headers = await nextHeaders();
+    const previewData = client.getPreviewData(headers);
+
+    if (isDesignLibraryPreviewData(previewData)) {
+      page = await client.getDesignLibraryData(previewData);
     } else {
-      page = await client.getPreview(editingParams);
+      page = await client.getPreview(previewData);
     }
   } else {
-    page = cachedPage;
+    page = await client.getPage(path ?? [], { site, locale });
   }
 
   // If the page is not found, return a 404
@@ -78,24 +71,12 @@ export const generateStaticParams = async () => {
     },
   ];
 };
-// Metadata fields for the page. Mirrors the Page draft-mode branching so the <title> matches the body.
-export const generateMetadata = async ({ params, searchParams }: PageProps) => {
+// Metadata fields for the page.
+export const generateMetadata = async ({ params }: PageProps) => {
   const { path, site, locale } = await params;
 
-  const draft = await draftMode();
-
-  let page;
-  if (draft.isEnabled) {
-    const editingParams = await searchParams;
-    if (isDesignLibraryPreviewData(editingParams)) {
-      page = await client.getDesignLibraryData(editingParams);
-    } else {
-      page = await client.getPreview(editingParams);
-    }
-  } else {
-    page = await getSitecorePage({ site, locale, path: path ?? [] });
-  }
-
+  // The same call as for rendering the page. Should be cached by default react behavior
+  const page = await client.getPage(path ?? [], { site, locale });
   return {
     title: (page?.layout.sitecore.route?.fields as RouteFields)?.Title?.value?.toString() || 'Page',
   };

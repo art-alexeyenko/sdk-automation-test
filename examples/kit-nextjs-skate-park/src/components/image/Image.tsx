@@ -66,7 +66,15 @@ export const Default: React.FC<ImageProps> = (props) => {
     return <ImageDefault {...props} />;
   }
 
-  const Image = () => <ContentSdkImage field={fields.Image} />;
+  const Image = () => (
+    <ContentSdkImage
+      field={fields.Image}
+      unoptimized={true}
+      imageParams={{ mw: 100, mh: 50 }}
+      width={100}
+      height={50}
+    />
+  );
   const shouldWrapWithLink =
     !page.mode.isEditing && fields.TargetUrl?.value?.href;
 
