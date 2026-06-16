@@ -3,9 +3,9 @@ name: content-sdk-component-variants
 description: Implements component variants: different renderings or data-driven variants of the same component type. App Router: register in component-map.ts or component-map.client.ts as appropriate. Use when one component has multiple presentations.
 ---
 
-# Content SDK Component Variants (App Router + Cache Components)
+# Content SDK Component Variants (App Router)
 
-One component definition can have multiple presentations or data-driven variants. Keep registration and layout aligned. This app does not use getComponentData; layout/placeholder data comes from the cached `getSitecorePage` (or `client.getPreview` in draft mode).
+One component definition can have multiple presentations or data-driven variants. Keep registration and layout aligned. This app does not use getComponentData; layout/placeholder data comes from getPage.
 
 ## When to Use
 
