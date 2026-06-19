@@ -5,7 +5,7 @@ import { Link, LinkField } from '@sitecore-content-sdk/nextjs';
 import { ComponentProps } from 'lib/component-props';
 
 interface LinkRenderTestFields {
-  targetLink: LinkField;
+  TargetLink: LinkField;
 }
 
 interface LinkRenderTestProps extends ComponentProps {
@@ -23,7 +23,7 @@ export const Default = ({ fields }: LinkRenderTestProps): React.JSX.Element => {
     return <div style={{ border: '2px solid red', padding: '8px' }}>No fields provided</div>;
   }
 
-  const { targetLink } = fields;
+  const targetLink = fields.TargetLink;
 
   return (
     <div
