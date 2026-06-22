@@ -35,7 +35,12 @@ export default async function Page({ params }: PageProps) {
       page = await client.getPreview(previewData);
     }
   } else {
-    page = await client.getPage(path ?? [], { site, locale });
+    try {
+      page = await client.getPage(path ?? [], { site, locale });
+    } catch {
+      // Edge may return a 404 when content hasn't been published yet (e.g. fresh project).
+      notFound();
+    }
   }
 
   // If the page is not found, return a 404
@@ -75,9 +80,15 @@ export const generateStaticParams = async () => {
 export const generateMetadata = async ({ params }: PageProps) => {
   const { path, site, locale } = await params;
 
-  // The same call as for rendering the page. Should be cached by default react behavior
-  const page = await client.getPage(path ?? [], { site, locale });
-  return {
-    title: (page?.layout.sitecore.route?.fields as RouteFields)?.Title?.value?.toString() || 'Page',
-  };
+  try {
+    // The same call as for rendering the page. Should be cached by default react behavior
+    const page = await client.getPage(path ?? [], { site, locale });
+    return {
+      title: (page?.layout.sitecore.route?.fields as RouteFields)?.Title?.value?.toString() || 'Page',
+    };
+  } catch {
+    // Edge may return a 404 when content hasn't been published yet (e.g. fresh project).
+    // Fall back to a default title so the build does not fail.
+    return { title: 'Page' };
+  }
 };
