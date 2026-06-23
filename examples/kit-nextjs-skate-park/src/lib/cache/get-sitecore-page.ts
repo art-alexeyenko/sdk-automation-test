@@ -15,7 +15,16 @@ export async function getSitecorePage(params: GetSitecorePageParams): Promise<Pa
   'use cache';
 
   const { site, locale, path } = params;
-  const page = await client.getPage(path, { site, locale });
+
+  // client.getPage throws (rather than returning null) when the Edge platform returns an HTTP 404
+  // "sitecoreContextId does not contain an edge resource". This happens on fresh XM Cloud projects
+  // where content hasn't been published to Edge yet. Treat it as a not-found page.
+  let page: Page | null;
+  try {
+    page = await client.getPage(path, { site, locale });
+  } catch {
+    return null;
+  }
 
   const tags = collectSitecorePageCacheTags({
     site,
