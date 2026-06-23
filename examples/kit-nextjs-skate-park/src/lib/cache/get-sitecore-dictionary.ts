@@ -16,5 +16,12 @@ export async function getSitecoreDictionary(params: GetSitecoreDictionaryParams)
   const { site, locale } = params;
   cacheTag(buildSitecoreDictionaryCacheTag({ site, locale }));
 
-  return client.getDictionary({ site, locale });
+  // client.getDictionary throws (rather than returning an empty result) when the Edge platform
+  // returns an HTTP 404 "sitecoreContextId does not contain an edge resource". This happens on
+  // fresh XM Cloud projects where content hasn't been published to Edge yet.
+  try {
+    return client.getDictionary({ site, locale });
+  } catch {
+    return {};
+  }
 }
