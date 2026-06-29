@@ -7,15 +7,10 @@ import Providers from 'src/Providers';
 
 export default async function NotFound() {
   if (scConfig.defaultSite) {
-    let page;
-    try {
-      page = await client.getErrorPage(ErrorPage.NotFound, {
-        site: scConfig.defaultSite,
-        locale: scConfig.defaultLanguage,
-      });
-    } catch {
-      page = null;
-    }
+    const page = await client.getErrorPage(ErrorPage.NotFound, {
+      site: scConfig.defaultSite,
+      locale: scConfig.defaultLanguage,
+    });
 
     if (page) {
       return (
