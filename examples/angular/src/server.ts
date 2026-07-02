@@ -29,7 +29,24 @@ import config from '../sitecore.config';
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+
+/**
+ * Configure Angular SSR engine with XM Cloud-compatible security settings.
+ *
+ * allowedHosts: Permits requests from XM Cloud editing and pages hosts.
+ *   The wildcard patterns cover both staging (*.sitecore-staging.cloud) and
+ *   production (*.sitecore.cloud) environments. Override at runtime via the
+ *   NG_ALLOWED_HOSTS environment variable (comma-separated list).
+ *
+ * trustProxyHeaders: XM Cloud routes requests through its own reverse proxy,
+ *   which injects x-forwarded-for/path/port headers. Setting this to true
+ *   tells Angular SSR to trust those headers instead of rejecting them.
+ *   Override at runtime via the NG_TRUST_PROXY_HEADERS environment variable.
+ */
+const angularApp = new AngularNodeAppEngine({
+  allowedHosts: ['*.sitecore-staging.cloud', '*.sitecore.cloud'],
+  trustProxyHeaders: true,
+});
 
 /**
  * Loader cache driver selection (server only).
