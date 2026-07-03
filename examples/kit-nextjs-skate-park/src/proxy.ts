@@ -1,4 +1,4 @@
-import { NextFetchEvent, type NextRequest } from 'next/server';
+import { NextFetchEvent, type NextRequest } from "next/server";
 import {
   defineProxy,
   AppRouterMultisiteProxy,
@@ -7,13 +7,22 @@ import {
   LocaleProxy,
   BotTrackingProxy,
   PreviewProxy,
-} from '@sitecore-content-sdk/nextjs/proxy';
-import sites from '.sitecore/sites.json';
-import scConfig from 'sitecore.config';
-import { routing } from './i18n/routing';
-import client from './lib/sitecore-client';
+} from "@sitecore-content-sdk/nextjs/proxy";
+import sites from ".sitecore/sites.json";
+import scConfig from "sitecore.config";
+import { routing } from "./i18n/routing";
+import client from "./lib/sitecore-client";
+import { draftMode } from "next/headers";
 
-export default function proxy(req: NextRequest, event: NextFetchEvent) {
+export default async function proxy(req: NextRequest, event: NextFetchEvent) {
+  // log to check all cookie and header
+  console.log("********");
+  console.log("in proxy check for draft mode");
+  const draft = await draftMode();
+  console.log("Draft Mode enabled:", draft.isEnabled);
+  console.log("Cookies:", JSON.stringify(req.cookies.getAll()));
+  console.log("Headers:", JSON.stringify(req.headers));
+  console.log("********");
   // PreviewProxy authorizes preview requests
   const preview = new PreviewProxy({
     client: client,
