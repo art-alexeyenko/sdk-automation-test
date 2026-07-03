@@ -26,6 +26,7 @@ export default async function Page({ params }: PageProps) {
   
   const headers = await nextHeaders();
   console.log("^^^^^^^^", headers.get("X-SC-Prerender-Bypass"));
+  console.log("^^^^^^^^ is enabled", draft.isEnabled);
   
 
   // Fetch the page data from Sitecore
