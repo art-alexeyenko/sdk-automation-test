@@ -1,0 +1,4 @@
+[[headers]]
+  for = "/*"
+  [headers.values]
+    "Netlify-Vary" = "header=X-SC-Prerender-Bypass"
