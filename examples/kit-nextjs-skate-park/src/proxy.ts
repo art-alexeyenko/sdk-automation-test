@@ -15,13 +15,13 @@ import client from "./lib/sitecore-client";
 import { draftMode } from "next/headers";
 
 export default async function proxy(req: NextRequest, event: NextFetchEvent) {
-  // log to check all cookie and header
   console.log("********");
   console.log("in proxy check for draft mode");
   const draft = await draftMode();
   console.log("Draft Mode enabled:", draft.isEnabled);
   console.log("Cookies:", JSON.stringify(req.cookies.getAll()));
-  console.log("Headers:", JSON.stringify(req.headers));
+  console.log("Headers:");
+  req.headers.forEach((value, key) => console.log(`${key}: ${value}`));
   console.log("********");
   // PreviewProxy authorizes preview requests
   const preview = new PreviewProxy({
