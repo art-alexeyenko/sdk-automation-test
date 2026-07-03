@@ -23,10 +23,15 @@ export default async function Page({ params }: PageProps) {
 
   const draft = await draftMode();
 
+  
+  const headers = await nextHeaders();
+  console.log("^^^^^^^^", headers.get("X-SC-Prerender-Bypass"));
+  
+
   // Fetch the page data from Sitecore
   let page;
 if (draft.isEnabled) {
-    const headers = await nextHeaders();
+  
     const previewData = client.getPreviewData(headers);
 
     if (isDesignLibraryPreviewData(previewData)) {
