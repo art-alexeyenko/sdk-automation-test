@@ -15,7 +15,7 @@ type PageProps = {
   params: Promise<{ site: string; locale: string; path?: string[]; [key: string]: string | string[] | undefined }>;
 };
 
-export default async function Page({ params, searchParams }: PageProps) {
+export default async function Page({ params }: PageProps) {
   const { site, locale, path } = await params;
 
   // Set site and locale to be available in src/i18n/request.ts for fetching the dictionary
