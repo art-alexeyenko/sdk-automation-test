@@ -1,6 +1,6 @@
 import { isDesignLibraryPreviewData } from '@sitecore-content-sdk/nextjs/editing';
 import { notFound } from 'next/navigation';
-import { cookies, draftMode, headers as nextHeaders} from 'next/headers';
+import { draftMode, headers as nextHeaders} from 'next/headers';
 import { SiteInfo } from '@sitecore-content-sdk/nextjs';
 import sites from '.sitecore/sites.json';
 import { routing } from 'src/i18n/routing';
@@ -23,19 +23,12 @@ export default async function Page({ params }: PageProps) {
 
   const draft = await draftMode();
 
-  
-  const headers = await nextHeaders();
-  console.log("^^^^^^^^", headers.get("X-SC-Prerender-Bypass"));
   console.log("^^^^^^^^ is enabled", draft.isEnabled);
-
-  const cs = await cookies();
-  cs.getAll().forEach(console.log);
-  
 
   // Fetch the page data from Sitecore
   let page;
-if (draft.isEnabled) {
-  
+  if (draft.isEnabled) {
+    const headers = await nextHeaders();
     const previewData = client.getPreviewData(headers);
 
     if (isDesignLibraryPreviewData(previewData)) {
@@ -44,7 +37,7 @@ if (draft.isEnabled) {
       page = await client.getPreview(previewData);
     }
   } else {
-     page = await client.getPage(path ?? [], { site, locale });
+    page = await client.getPage(path ?? [], { site, locale });
   }
 
   // If the page is not found, return a 404
