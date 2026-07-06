@@ -13,13 +13,10 @@ import sites from ".sitecore/sites.json";
 import scConfig from "sitecore.config";
 import { routing } from "./i18n/routing";
 import client from "./lib/sitecore-client";
-import { draftMode } from "next/headers";
 
 export default async function proxy(req: NextRequest, event: NextFetchEvent) {
   console.log("********");
   console.log("in proxy check for draft mode");
-  const draft = await draftMode();
-  console.log("Draft Mode enabled:", draft.isEnabled);
   console.log("Cookies:", JSON.stringify(req.cookies.getAll()));
   console.log("Headers:");
   req.headers.forEach((value, key) => console.log(`${key}: ${value}`));
