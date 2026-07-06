@@ -29,7 +29,7 @@ export default async function Page({ params }: PageProps) {
   console.log("^^^^^^^^ is enabled", draft.isEnabled);
 
   const cs = await cookies();
-  console.log(JSON.stringify(cs.getAll().toString()));
+  cs.getAll().forEach(console.log);
   
 
   // Fetch the page data from Sitecore
