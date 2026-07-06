@@ -7,6 +7,7 @@ import {
   LocaleProxy,
   BotTrackingProxy,
   PreviewProxy,
+  DraftModeProxy,
 } from "@sitecore-content-sdk/nextjs/proxy";
 import sites from ".sitecore/sites.json";
 import scConfig from "sitecore.config";
@@ -107,7 +108,9 @@ export default async function proxy(req: NextRequest, event: NextFetchEvent) {
     // },
   });
 
-  return defineProxy(preview, botTracking, locale, multisite, redirects, personalize).exec(req);
+  const draftMode = new DraftModeProxy({ sites });
+
+  return defineProxy(preview, botTracking, locale, multisite, draftMode, redirects, personalize).exec(req);
 }
 
 export const config = {
