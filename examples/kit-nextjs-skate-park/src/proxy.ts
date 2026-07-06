@@ -121,7 +121,7 @@ export default async function proxy(req: NextRequest, event: NextFetchEvent) {
   response.cookies.getAll().forEach(console.log);
 
   console.log("rewrite proxy result headers ->");
- console.log( JSON.stringify(response.headers))
+  response.headers.forEach((value, key) => console.log(key, value));
 
   return response;
 }
