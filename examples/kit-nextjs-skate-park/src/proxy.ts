@@ -1,4 +1,4 @@
-import { NextFetchEvent, type NextRequest } from "next/server";
+import { NextFetchEvent, type NextRequest } from 'next/server';
 import {
   defineProxy,
   AppRouterMultisiteProxy,
@@ -7,20 +7,13 @@ import {
   LocaleProxy,
   BotTrackingProxy,
   PreviewProxy,
-  DraftModeProxy,
-} from "@sitecore-content-sdk/nextjs/proxy";
-import sites from ".sitecore/sites.json";
-import scConfig from "sitecore.config";
-import { routing } from "./i18n/routing";
-import client from "./lib/sitecore-client";
+} from '@sitecore-content-sdk/nextjs/proxy';
+import sites from '.sitecore/sites.json';
+import scConfig from 'sitecore.config';
+import { routing } from './i18n/routing';
+import client from './lib/sitecore-client';
 
-export default async function proxy(req: NextRequest, event: NextFetchEvent) {
-  console.log("********");
-  console.log("in proxy check for draft mode");
-  console.log("Cookies:", JSON.stringify(req.cookies.getAll()));
-  console.log("Headers:");
-  req.headers.forEach((value, key) => console.log(`${key}: ${value}`));
-  console.log("********");
+export default function proxy(req: NextRequest, event: NextFetchEvent) {
   // PreviewProxy authorizes preview requests
   const preview = new PreviewProxy({
     client: client,
@@ -105,25 +98,7 @@ export default async function proxy(req: NextRequest, event: NextFetchEvent) {
     // },
   });
 
-  const draftMode = new DraftModeProxy({ sites });
-
-  const response = await defineProxy(
-    preview,
-    botTracking,
-    locale,
-    multisite,
-    draftMode,
-    redirects,
-    personalize,
-  ).exec(req);
-
-  console.log("rewrite proxy result cookies ->");
-  response.cookies.getAll().forEach(console.log);
-
-  console.log("rewrite proxy result headers ->");
-  response.headers.forEach((value, key) => console.log(key, value));
-
-  return response;
+  return defineProxy(preview, botTracking, locale, multisite, redirects, personalize).exec(req);
 }
 
 export const config = {

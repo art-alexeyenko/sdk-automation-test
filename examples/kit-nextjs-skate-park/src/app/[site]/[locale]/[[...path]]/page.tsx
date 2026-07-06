@@ -1,6 +1,6 @@
 import { isDesignLibraryPreviewData } from '@sitecore-content-sdk/nextjs/editing';
 import { notFound } from 'next/navigation';
-import { draftMode, headers as nextHeaders} from 'next/headers';
+import { draftMode, headers as nextHeaders } from 'next/headers';
 import { SiteInfo } from '@sitecore-content-sdk/nextjs';
 import sites from '.sitecore/sites.json';
 import { routing } from 'src/i18n/routing';
@@ -22,8 +22,6 @@ export default async function Page({ params }: PageProps) {
   setRequestLocale(`${site}_${locale}`);
 
   const draft = await draftMode();
-
-  console.log("^^^^^^^^ is enabled", draft.isEnabled);
 
   // Fetch the page data from Sitecore
   let page;
