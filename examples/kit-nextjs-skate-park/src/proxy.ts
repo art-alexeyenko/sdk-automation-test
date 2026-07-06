@@ -107,7 +107,23 @@ export default async function proxy(req: NextRequest, event: NextFetchEvent) {
 
   const draftMode = new DraftModeProxy({ sites });
 
-  return defineProxy(preview, botTracking, locale, multisite, draftMode, redirects, personalize).exec(req);
+  const response = await defineProxy(
+    preview,
+    botTracking,
+    locale,
+    multisite,
+    draftMode,
+    redirects,
+    personalize,
+  ).exec(req);
+
+  console.log("rewrite proxy result cookies ->");
+  response.cookies.getAll().forEach(console.log);
+
+  console.log("rewrite proxy result headers ->");
+  response.headers.forEach(console.log);
+
+  return response;
 }
 
 export const config = {
