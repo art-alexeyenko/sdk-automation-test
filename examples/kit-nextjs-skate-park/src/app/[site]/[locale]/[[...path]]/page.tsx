@@ -1,6 +1,6 @@
 import { isDesignLibraryPreviewData } from '@sitecore-content-sdk/nextjs/editing';
 import { notFound } from 'next/navigation';
-import { draftMode, headers as nextHeaders} from 'next/headers';
+import { cookies, draftMode, headers as nextHeaders} from 'next/headers';
 import { SiteInfo } from '@sitecore-content-sdk/nextjs';
 import sites from '.sitecore/sites.json';
 import { routing } from 'src/i18n/routing';
@@ -27,6 +27,9 @@ export default async function Page({ params }: PageProps) {
   const headers = await nextHeaders();
   console.log("^^^^^^^^", headers.get("X-SC-Prerender-Bypass"));
   console.log("^^^^^^^^ is enabled", draft.isEnabled);
+
+  const cs = await cookies();
+  console.log(JSON.parse(cs.getAll().toString()));
   
 
   // Fetch the page data from Sitecore
