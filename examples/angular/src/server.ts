@@ -9,7 +9,7 @@ import express from 'express';
 import { join } from 'node:path';
 import memoryDriver from 'unstorage/drivers/memory';
 import {
-  createCacheAdminMiddleware,
+  createBotTrackingMiddleware,
   createEditingConfigMiddleware,
   createEditingRenderMiddleware,
   createLoaderCache,
@@ -17,6 +17,7 @@ import {
   createRobotsMiddleware,
   createMultisiteMiddleware,
   createPersonalizeMiddleware,
+  createRedirectsMiddleware,
   createSitecoreRevalidateMiddleware,
   createSitemapMiddleware,
 } from '@sitecore-content-sdk/angular';
@@ -76,9 +77,6 @@ app.use(
   })
 );
 
-/** Admin endpoints for cache inspection and invalidation (see `/api/_cache`). */
-app.use(createCacheAdminMiddleware({ cache: loaderCache, endpoint: '/api/_cache' }));
-
 /**
  * Editing config endpoint (`/api/editing/config`). Replies with the registered
  * component map keys and `editMode: 'metadata'` so Sitecore Pages can negotiate
@@ -99,8 +97,8 @@ app.use(
 app.use(createEditingRenderMiddleware());
 
 /**
- * Shared path matcher for the request-scoped middlewares (multisite + personalize, and any
- * future redirects middleware). It decides which requests these middlewares act on.
+ * Shared path matcher for the request-scoped middlewares (multisite, redirects and personalize).
+ * It decides which requests these middlewares act on.
  *
  * Patterns are exact strings or RegExp. The SDK already skips API routes (`/api/*`), Sitecore
  * routes (`/sitecore/*`), static files (any path whose last segment has an extension) and
@@ -129,10 +127,44 @@ app.use(
   })
 );
 
+/*
+ * Bot tracking middleware. Detects bots by User-Agent, sets the `sc_bot` cookie, and sends a
+ * dedicated bot page-view event. Must run before personalize so the bot cookie is set before
+ * personalize decides whether to skip. Does not run in dev/localhost environments.
+ */
+app.use(
+  createBotTrackingMiddleware({
+    ...config.api.edge,
+    locales: config.angular.locales,
+    defaultLanguage: config.defaultLanguage,
+    defaultSite: config.defaultSite,
+    matcher: middlewareMatcher,
+  })
+);
+
+/**
+ * Redirects middleware. Matches each request against the site's Sitecore redirects (locale,
+ * static and regex rules) and issues a 301/302 redirect or an internal server-transfer rewrite.
+ * Runs after multisite (which resolves the site it fetches redirects for) and before personalize
+ * so a redirect short-circuits the request before a CDP call is made.
+ */
+app.use(
+  createRedirectsMiddleware({
+    ...config.redirects,
+    ...config.api.edge,
+    ...(config.api.local ?? {}),
+    sites,
+    defaultLanguage: config.defaultLanguage,
+    defaultSite: config.defaultSite,
+    matcher: middlewareMatcher,
+  })
+);
+
 /**
  * Personalize middleware. Identifies page/component variants for the request via
  * Sitecore CDP and writes them onto `req.scParams` so the page loader fetches the
- * personalized layout and the loader cache keys per variant.
+ * personalized layout and the loader cache keys per variant. Skips bot requests marked
+ * by the bot tracking middleware (`skipForBot`, default true).
  *
  * NOTE: Personalize requires Edge configuration (contextId/clientContextId) and
  * cannot work with local containers
@@ -198,3 +230,4 @@ if (isMainModule(import.meta.url)) {
  * Request handler used by the Angular CLI (for dev-server and during build) or Firebase Cloud Functions.
  */
 export const reqHandler = createNodeRequestHandler(app);
+export default reqHandler;
