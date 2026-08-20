@@ -5,7 +5,6 @@ import { default as app } from '../../dist/content-sdk-angular/server/server.mjs
 const handler = serverless(app);
 const FUNCTION_BASE = '/.netlify/functions/server';
 
-/** serverless-http's result for a Lambda Function URL ("2.0") event. */
 interface LambdaResult {
   statusCode: number;
   headers: Record<string, string>;
@@ -16,7 +15,6 @@ interface LambdaResult {
 
 export default async (request: Request, context: Context) => {
   const url = new URL(request.url);
-  // Strip the function base path for direct invocations; rewrites arrive with the original path.
   const path = url.pathname.startsWith(FUNCTION_BASE)
     ? url.pathname.slice(FUNCTION_BASE.length) || '/'
     : url.pathname;
