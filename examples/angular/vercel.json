@@ -5,11 +5,11 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/vercel/index"
+      "destination": "/api/index"
     }
   ],
   "functions": {
-    "vercel/index.mjs": {
+    "api/index.mjs": {
       "includeFiles": "dist/content-sdk-angular/**"
     }
   }
