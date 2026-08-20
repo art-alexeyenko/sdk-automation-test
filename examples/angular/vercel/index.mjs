@@ -1,0 +1,1 @@
+export { default } from '../dist/content-sdk-angular/server/server.mjs';
