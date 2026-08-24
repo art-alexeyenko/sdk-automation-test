@@ -7,6 +7,10 @@ import { environment } from './src/environments/environment';
  * @see https://doc.sitecore.com/xmc/en/developers/content-sdk/the-sitecore-configuration-file.html
  */
 export default defineConfig(
-  {},
+  {
+    angular: {
+      locales: ['en', 'da'],
+    },
+  },
   environment satisfies Record<string, string | undefined>
 );

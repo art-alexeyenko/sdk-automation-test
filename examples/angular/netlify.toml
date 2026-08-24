@@ -1,0 +1,11 @@
+[build]
+  command = "npm run build"
+  publish = "dist/content-sdk-angular/browser"
+
+[functions.server]
+  included_files = ["dist/content-sdk-angular/**"]
+
+[[redirects]]
+  from = "/*"
+  status = 200
+  to = "/.netlify/functions/server/:splat"
