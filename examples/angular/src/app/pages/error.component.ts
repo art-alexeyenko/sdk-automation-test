@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, RESPONSE_INIT } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Page } from '@sitecore-content-sdk/angular';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -91,6 +91,10 @@ import { LayoutComponent } from '../shared/layout.component';
   ],
 })
 export class ErrorComponent {
+  constructor() {
+    const responseInit = inject(RESPONSE_INIT, { optional: true });
+    if (responseInit) responseInit.status = 500;
+  }
   private readonly route = inject(ActivatedRoute);
   private readonly routeData = toSignal(this.route.data);
 
