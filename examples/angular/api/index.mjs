@@ -5,53 +5,41 @@ import { dirname, join } from 'node:path';
 /**
  * Vercel Node function entry for the Angular SSR server.
  *
- * The Angular server bundle (`server.mjs`) locates its render assets — `index.server.html`
- * and the sibling `../browser` folder — relative to its own `import.meta` directory. If
- * Vercel's `@vercel/node` (esbuild) bundler inlines the bundle into this entry file, that
- * relative base shifts and Angular can no longer find those assets; it then silently
- * degrades to serving the empty client shell (`index.csr.html`) with HTTP 200 for every
- * route (so `/404` returns 200 and 404s resolve only client-side).
+ * TEMPORARY DIAGNOSTIC BUILD: emits `x-ssr-*` response headers so the runtime state on
+ * Vercel (cwd, resolved bundle path, the URL Angular actually sees) can be read with a
+ * plain `curl -I`. Remove the header block once the 404-status issue is resolved.
  *
- * The fix loads the bundle dynamically from its real on-disk path so it runs as its own
- * file with `import.meta` intact. The specifier is computed (not a literal) so the bundler
- * won't inline it; the files ship via the `functions.includeFiles` glob in `vercel.json`.
- *
- * `includeFiles` preserves paths relative to the Vercel *project root*, which at runtime is
- * `process.cwd()` (`/var/task` on Vercel). But the sub-path under it depends on the project's
- * Root Directory setting (repo root vs. `examples/angular`) and on whether the bundler kept
- * this entry at `/api`. Rather than assume, probe the known candidate locations and use the
- * first that exists — mirroring the resolution strategy in `src/load-env.ts`.
+ * Background: the Angular server bundle (`server.mjs`) resolves its render assets relative
+ * to its own `import.meta` dir, so it must run as a real file (not inlined by Vercel's
+ * bundler). It is loaded via a computed specifier and shipped via `functions.includeFiles`.
  */
 const SERVER_REL = 'dist/content-sdk-angular/server/server.mjs';
 const here = dirname(fileURLToPath(import.meta.url));
 
 const candidatePaths = [
-  join(process.cwd(), SERVER_REL), // Root Directory = examples/angular  -> /var/task/dist/...
-  join(process.cwd(), 'examples/angular', SERVER_REL), // Root Directory = repo root -> /var/task/examples/angular/dist/...
-  join(here, '..', SERVER_REL), // relative to this entry at /api/
-  join(here, SERVER_REL), // entry colocated with dist
+  join(process.cwd(), SERVER_REL),
+  join(process.cwd(), 'examples/angular', SERVER_REL),
+  join(here, '..', SERVER_REL),
+  join(here, SERVER_REL),
 ];
 
 /**
- * Resolve the absolute path to the built Angular server bundle, failing fast with the
- * probed locations if it cannot be found (so a packaging regression is obvious in logs).
- * @returns {string} Absolute path to `server.mjs`.
+ * Resolve the absolute path to the built Angular server bundle, or `null` if none of the
+ * candidate locations exist (reported via diagnostic header instead of throwing).
+ * @returns {string | null} Absolute path to `server.mjs`, or null.
  */
 function resolveServerEntry() {
-  const found = candidatePaths.find((candidate) => existsSync(candidate));
-  if (!found) {
-    throw new Error(
-      `Angular server bundle not found. cwd=${process.cwd()} entry=${here}. Tried:\n` +
-        candidatePaths.map((candidate) => `  - ${candidate}`).join('\n')
-    );
-  }
-  return found;
+  return candidatePaths.find((candidate) => existsSync(candidate)) ?? null;
 }
 
 let handlerPromise;
-function loadHandler() {
+/**
+ * @param {string} entry - Absolute path to the server bundle.
+ * @returns {Promise<Function>} The Express-backed request handler.
+ */
+function loadHandler(entry) {
   if (!handlerPromise) {
-    handlerPromise = import(pathToFileURL(resolveServerEntry()).href).then((module) => module.default);
+    handlerPromise = import(pathToFileURL(entry).href).then((module) => module.default);
   }
   return handlerPromise;
 }
@@ -61,6 +49,24 @@ function loadHandler() {
  * @param {import('http').ServerResponse} res
  */
 export default async function handler(req, res) {
-  const reqHandler = await loadHandler();
+  const entry = resolveServerEntry();
+
+  // Diagnostic headers — safe to read with `curl -I`, removed after the fix is confirmed.
+  res.setHeader('x-ssr-cwd', process.cwd());
+  res.setHeader('x-ssr-entry-here', here);
+  res.setHeader('x-ssr-entry', entry ?? 'NOT_FOUND');
+  res.setHeader('x-ssr-url', req.url ?? '');
+
+  if (!entry) {
+    res.statusCode = 500;
+    res.setHeader('content-type', 'text/plain');
+    res.end(
+      `Angular server bundle not found. cwd=${process.cwd()} here=${here}\nTried:\n` +
+        candidatePaths.map((candidate) => `  - ${candidate}`).join('\n')
+    );
+    return;
+  }
+
+  const reqHandler = await loadHandler(entry);
   return reqHandler(req, res);
 }
