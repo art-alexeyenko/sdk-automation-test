@@ -1,4 +1,4 @@
-import { Component, computed, inject, RESPONSE_INIT } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { Page } from '@sitecore-content-sdk/angular';
@@ -71,10 +71,6 @@ import { LayoutComponent } from '../shared/layout.component';
   ],
 })
 export class NotFoundComponent {
-  constructor() {
-    const responseInit = inject(RESPONSE_INIT, { optional: true });
-    if (responseInit) responseInit.status = 404;
-  }
   private readonly route = inject(ActivatedRoute);
   private readonly routeData = toSignal(this.route.data);
 
