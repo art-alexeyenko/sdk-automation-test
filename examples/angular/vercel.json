@@ -1,15 +1,16 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/content-sdk-angular/browser",
+  "outputDirectory": "dist/content-sdk-angular",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index"
+    }
+  ],
   "functions": {
     "api/index.mjs": {
       "includeFiles": "dist/content-sdk-angular/**"
     }
-  },
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/api/index" }
-  ]
+  }
 }
