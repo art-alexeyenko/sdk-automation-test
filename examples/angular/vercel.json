@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/content-sdk-angular",
+  "outputDirectory": "dist/content-sdk-angular/server",
   "rewrites": [
     {
       "source": "/(.*)",
